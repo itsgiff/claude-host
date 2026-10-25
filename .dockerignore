@@ -1,0 +1,4 @@
+# The image only needs entrypoint.sh; keep everything else out of the build context.
+.git
+.env
+tests
