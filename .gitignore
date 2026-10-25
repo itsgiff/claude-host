@@ -5,3 +5,5 @@
 # Belt and braces for the public mirror: never track a stray copy of live data.
 home/
 work/
+# The template is safe to commit; this overrides a global ".env.*" ignore.
+!.env.example
