@@ -1,0 +1,3 @@
+# Normalise line endings; scripts must be LF to run in the container.
+* text=auto eol=lf
+*.sh text eol=lf

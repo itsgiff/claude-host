@@ -1,0 +1,10 @@
+extends: default
+
+rules:
+  line-length:
+    max: 120
+  document-start: disable        # compose files don't use ---
+  comments:
+    min-spaces-from-content: 1   # allow aligned inline comments
+  truthy:
+    check-keys: false            # "on:" keys in workflow files

@@ -1,0 +1,7 @@
+# Local settings (HOST_UID/HOST_GID/DATA_DIR). Never commit.
+# Live data lives outside the repo, in appdata/claude-host on the NAS.
+.env
+
+# Belt and braces for the public mirror: never track a stray copy of live data.
+home/
+work/

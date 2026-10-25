@@ -1,0 +1,74 @@
+# Git hooks for claude-host, managed by https://pre-commit.com
+#
+# One-time per clone:   pre-commit install
+# Run everything now:   pre-commit run --all-files
+# Bump hook versions:   pre-commit autoupdate   (do it in its own commit)
+# Skip one hook once:   SKIP=<hook-id> git commit ...   (say why in the message)
+
+default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit]
+
+repos:
+  # Generic hygiene
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: detect-private-key
+      - id: no-commit-to-branch      # work on a branch, merge via PR
+        args: [--branch, main]
+
+  # Secrets: block anything that looks like a token or key.
+  # Uses the gitleaks binary on PATH (installed via nixcfg) instead of building it from Go source.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks-system
+        pass_filenames: false        # it scans the staged diff itself
+
+  # Shell scripts
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+
+  # Dockerfile
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v2.15.1
+    hooks:
+      - id: hadolint
+
+  # YAML style (config in .yamllint.yaml)
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [--strict]
+
+  # Our own tests, run only when the entrypoint or its tests change
+  - repo: local
+    hooks:
+      - id: entrypoint-tests
+        name: entrypoint smoke tests
+        entry: tests/entrypoint_test.sh
+        language: script
+        files: ^(entrypoint\.sh|tests/entrypoint_test\.sh)$
+        pass_filenames: false
+
+  # Commit messages: Conventional Commits, e.g. "feat(entrypoint): add preflight checks"
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        # Same types as gcm in nixcfg, so a message gcm accepts is never rejected here.
+        args: [--strict, build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test]

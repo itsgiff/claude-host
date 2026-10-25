@@ -1,0 +1,10 @@
+# gitleaks config: default rules plus narrow, documented exceptions.
+# Every exception must say why it is not a secret.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Anthropic's public Claude Code release-signing key fingerprint (published in their docs, not a secret)"
+regexTarget = "match"
+regexes = ['''31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE''']
